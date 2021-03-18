@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <title>Document</title>
+<style>
+.container{
+    width: 80%;
+    margin: 0 auto;
+    border: 1px black solid;
+}
+</style>
+</head>
+<body>
+
+
+<div></div>
+    <div class="container">
+        <div id="items">
+
+
+        </div>
+        <form>
+        <div><input text ="text" id = "userId" placeholder="이름을 입력하세요">
+            <input text ="text" id = "chat" placeholder="채팅을 입력하세요">
+            <button type = "button" id="btn-chat" class="btn btn-primary">전송</button></div>
+    </div>
+</form>
+    
+<script>
+    let chat = $("#chat").val();
+console.log(chat);
+
+        $("#btn-chat").on("click", (e)=>{
+	e.preventDefault(); //form태그 action안타게 막아버리는것
+
+  	let data = {
+		chat: $("#chat").val(),
+        userId: $("#userId").val(),
+	};
+      
+      $.ajax({
+		type: "POST",
+		url: "http://localhost:8080/chat",
+		data: JSON.stringify(data),
+		contentType: "application/json; charset=utf-8",
+		dataType:"json"
+	})
+			
+	});
+
+</script>
+
+    <script>
+
+         let items_el = document.querySelector("#items");
+         
+            const eventSource = new EventSource(`http://localhost:8080/sse`);
+            eventSource.onmessage = event =>{
+                let item_el =  document.createElement("div");
+                item_el.innerHTML = ` ${event.data}`;
+                items_el.appendChild(item_el);        
+            };
+            eventSource.onerror = error => {
+                eventSource.close();
+            };
+
+    </script>
+</body>
+</html>
